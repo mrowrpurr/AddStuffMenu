@@ -43,9 +43,9 @@ string function Help(string query) global
             Utility.WaitMenuMode(1)
 
             ; OPEN IT!
-            Debug.MessageBox("Opening...")
+            Debug.Trace("Opening...")
             Input.TapKey(41) ; Open ~
-            Debug.MessageBox("Should be open now")
+            Debug.Trace("Should be open now")
             ; Input.TapKey(Input.GetMappedKey("Console")) ; Open
             
             Utility.WaitMenuMode(1)
@@ -61,7 +61,7 @@ string function Help(string query) global
                 Debug.Trace("Waiting for console to open....")
                 Utility.WaitMenuMode(0.01)
             endWhile
-            Debug.MessageBox("It is OPEN!")
+            Debug.Trace("It is OPEN!")
             isShown = true
             consoleOpen = true
         endIf
@@ -122,7 +122,7 @@ string function Help(string query) global
         Debug.Trace("E")
 
         ; Enter (Twice, just cuz)
-        Debug.MessageBox("PRESSING ENTER...")
+        Debug.Trace("PRESSING ENTER...")
         Input.TapKey(28)
         Utility.WaitMenuMode(1)
         Input.TapKey(28)
@@ -132,14 +132,14 @@ string function Help(string query) global
         Utility.WaitMenuMode(0.01) 
 
         Debug.Trace("G")
-        Debug.MessageBox("Closing console! Is it open? "+ consoleOpen)
+        Debug.Trace("Closing console! Is it open? "+ consoleOpen)
         ; Close
         ; if consoleOpen
             ; Input.TapKey(Input.GetMappedKey("Console"))
             Input.TapKey(41)
         ; endIf
         Debug.Trace("H")
-        Debug.MessageBox("Closed?")
+        Debug.Trace("Closed?")
 
         ; Wait on the output to not be blank (or have more than just the command we write)
         while UI.GetString("Console", "_global.Console.ConsoleInstance.CommandHistory.text") == "" || UI.GetString("Console", "_global.Console.ConsoleInstance.CommandHistory.text") == command
@@ -222,7 +222,7 @@ int function ExecuteSearch(string query, string recordType = "", string filter =
 
     Debug.Trace("PARSE STARTING...")
 
-    Debug.MessageBox("PARSE STARTING")
+    Debug.Trace("PARSE STARTING")
 
     int i = 0
     while i < lines.Length
@@ -289,7 +289,7 @@ int function ExecuteSearch(string query, string recordType = "", string filter =
 
     Debug.Trace("RETURNING!")
 
-    Debug.MessageBox("PARSE COMPLETE")
+    Debug.Trace("PARSE COMPLETE")
 
     return results
 endFunction
