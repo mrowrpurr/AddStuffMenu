@@ -24,10 +24,12 @@
         <!-- These mods come with source directories by default with required .psc files -->
         <Import>@ModsFolder\JContainers\Scripts\Source</Import>
         <Import>@ImportsFolder\UIExtensions\Scripts\Source</Import>
+        <Import>@ImportsFolder\ConsoleUtil\Scripts\Source</Import>
         <!-- <Import>C:\Users\mrowr\AppData\Local\ModOrganizer\VR is Virtual Reality\mods\ConsoleTextEntry\Scripts\Source</Import> -->
-        <Import>C:\Users\mrowr\Dropbox\Skyrim\Mods\ConsoleTextEntry\Scripts\Source</Import>
-        <Import>C:\Users\mrowr\AppData\Local\ModOrganizer\VR is Virtual Reality\mods\Form Helper\Scripts\Source</Import>
-        <!-- <Import>C:\Users\mrowr\AppData\Local\ModOrganizer\Vanilla VR\mods\ConsoleTextEntry\Scripts\Source</Import> -->
+        <!-- <Import>C:\Users\mrowr\Dropbox\Skyrim\Mods\ConsoleTextEntry\Scripts\Source</Import> -->
+        <!-- <Import>C:\Users\mrowr\AppData\Local\ModOrganizer\VR is Virtual Reality\mods\Form Helper\Scripts\Source</Import> -->
+        <Import>C:\Users\mrowr\AppData\Local\ModOrganizer\Vanilla VR\mods\ConsoleTextEntry\Scripts\Source</Import>
+        <Import>C:\Users\mrowr\AppData\Local\ModOrganizer\Vanilla VR\mods\Form Helper\Scripts\Source</Import>
         <!-- <Import>@ModsFolder\PapyrusExtender\source\scripts</Import> -->
         <!-- <Import>@ModsFolder\LibFire\Scripts\Source</Import> -->
         <!-- <Import>@ModsFolder\iWantWidgets\Source\Scripts</Import> -->
@@ -36,7 +38,7 @@
 
         <!-- These mods DO NOT come with loose .psc files or are not "mods" and need to be setup manually  -->
         <!-- <Import>@ImportsFolder\SkyUI_5.1_SDK\Scripts\Source</Import> -->
-        <Import>C:\Users\mrowr\AppData\Local\ModOrganizer\Vanilla VR\mods\ConsoleUtilVR\Scripts</Import>
+        <!-- <Import>C:\Users\mrowr\AppData\Local\ModOrganizer\Vanilla VR\mods\ConsoleUtilVR\Scripts</Import> -->
         <Import>@ImportsFolder\PapyrusUtil\Scripts\Source</Import>
         <!-- <Import>@ImportsFolder\UIExtensions\scripts\source</Import> -->
 

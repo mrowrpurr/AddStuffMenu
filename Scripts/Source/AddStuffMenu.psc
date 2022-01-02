@@ -37,19 +37,24 @@ endFunction
 
 function Search()
     if _searchInProgress
-        Debug.Notification("Search in progress for " + _searchInProgress)
+        Debug.Trace("[ADDSTUFF] Search in progress for " + _searchInProgress)
         return
     endIf
 
     string query = ConsoleTextEntry.GetText("Please enter something:")
 
     if query
+        Debug.Trace("[ADDSTUFF] PREPARING THE RESULTS!")
         _searchInProgress = query
         ItemsContainer.RemoveAllItems()
         ShowSearchingMesage()
         RegisterForSingleUpdate(1)
-        int searchResult = ConsoleSearch.ExecuteSearch(query)
+        ; bool useConsoleUtilIfAvailable = (Game.GetModByName("SkyrimVR.esm") == 255) ; ConsoleUtil for VR currently causes CTD
+        bool useConsoleUtilIfAvailable = false
+        int searchResult = ConsoleSearch.ExecuteSearch(query, useConsoleUtil = useConsoleUtilIfAvailable)
+        Debug.Trace("[ADDSTUFF] SEARCH EXECUTE done")
         string[] resultCategories = ConsoleSearch.GetResultRecordTypes(searchResult)
+        Debug.Trace(resultCategories)
         int i = 0
         while i < resultCategories.Length
             string category = resultCategories[i]
@@ -71,8 +76,11 @@ function Search()
 
         _searchInProgress = ""
 
+        Debug.Trace("[ADDSTUFF] Container: " + ItemsContainer)
         if ItemsContainer.GetNumItems() > 0
             ItemsContainer.Activate(Game.GetPlayer())
+        else
+            Debug.MessageBox("No search results found for " + query)
         endIf
     endIf
 endFunction

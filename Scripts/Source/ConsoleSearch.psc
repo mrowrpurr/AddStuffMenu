@@ -3,7 +3,7 @@ scriptName ConsoleSearch
 
 ; Returns the raw returned text from running `help "[query]"` in the console
 string function Help(string query, bool useConsoleUtil = true) global
-    Debug.Notification("Performing help search for " + query)
+    Debug.Trace("[ADDSTUFF] Performing help search for " + query)
 
     bool consoleOpen = UI.GetBool("Console", "_global.Console.ConsoleInstance.Shown")
 
@@ -16,10 +16,12 @@ string function Help(string query, bool useConsoleUtil = true) global
 
     ; Initialize by opening the console at least once (then you can immediately close it)
     if ! consoleInitialized
+
+        ; Debug.Trace("[ADDSTUFF] Opening console!")
         if ! consoleOpen
             Input.TapKey(41) ; Open ~
             while ! UI.GetBool("Console", "_global.Console.ConsoleInstance.Shown") ; Wait for it to open
-                Utility.WaitMenuMode(0.01)
+                Utility.WaitMenuMode(0.1)
             endWhile
             consoleOpen = true
         endIf
@@ -28,9 +30,10 @@ string function Help(string query, bool useConsoleUtil = true) global
 
         if consoleOpen && consoleUtilInstalled
             Input.TapKey(41) ; Close (but keep it open if console util not installed)
-            while UI.GetBool("Console", "_global.Console.ConsoleInstance.Shown") ; Wait for it to close
-                Utility.WaitMenuMode(0.01)
-            endWhile
+            ; while UI.GetBool("Console", "_global.Console.ConsoleInstance.Shown") ; Wait for it to close
+            ;     Utility.WaitMenuMode(0.1)
+            ; endWhile
+            Utility.WaitMenuMode(1)
             consoleOpen = false
         endIf
     endIf
@@ -47,42 +50,48 @@ string function Help(string query, bool useConsoleUtil = true) global
         ConsoleUtil.ExecuteCommand(command)
 
         ; Wait on the output to not be blank (or have more than just the command we write)
-        while UI.GetString("Console", "_global.Console.ConsoleInstance.CommandHistory.text") == "" || UI.GetString("Console", "_global.Console.ConsoleInstance.CommandHistory.text") == command
-            Utility.WaitMenuMode(0.01)
-        endWhile
+        ; while UI.GetString("Console", "_global.Console.ConsoleInstance.CommandHistory.text") == "" || UI.GetString("Console", "_global.Console.ConsoleInstance.CommandHistory.text") == command
+        ;     Utility.WaitMenuMode(0.1)
+        ; endWhile
+        Utility.WaitMenuMode(1)
     else
         ; Open
         if ! consoleOpen
             Input.TapKey(41)
             while ! UI.GetBool("Console", "_global.Console.ConsoleInstance.Shown") ; Wait for it to open
-                Utility.WaitMenuMode(0.01)
+                Utility.WaitMenuMode(0.1)
             endWhile
             consoleOpen = true
         endIf
 
         ;  The command to run
         UI.SetString("Console", "_global.Console.ConsoleInstance.CommandEntry.text", command)
-        while UI.GetString("Console", "_global.Console.ConsoleInstance.CommandEntry.text") != command ; Wait for the command entry text to be populated
-            Utility.WaitMenuMode(0.01)
-        endWhile
+        ; while UI.GetString("Console", "_global.Console.ConsoleInstance.CommandEntry.text") != command ; Wait for the command entry text to be populated
+        ;     Utility.WaitMenuMode(0.1)
+        ; endWhile
+        Utility.WaitMenuMode(1)
 
+        ; Debug.Trace("[ADDSTUFF] PRESSING ENTER")
         ; Enter (Twice, just cuz)
         Input.TapKey(28)
-        Utility.WaitMenuMode(0.05) ; <--- CTD prevention, the game doesn't enjoy Input.TapKey without some wait between them
+        Utility.WaitMenuMode(0.1) ; <--- CTD prevention, the game doesn't enjoy Input.TapKey without some wait between them
         Input.TapKey(28)
 
         if consoleOpen
+            ; Debug.Trace("[ADDSTUFF] Closing console!")
             Input.TapKey(41)
-            while UI.GetBool("Console", "_global.Console.ConsoleInstance.Shown") ; Wait for it to close
-                Utility.WaitMenuMode(0.01)
-            endWhile
+            ; while UI.GetBool("Console", "_global.Console.ConsoleInstance.Shown") ; Wait for it to close
+            ;     Utility.WaitMenuMode(0.1)
+            ; endWhile
+            Utility.WaitMenuMode(1)
             consoleOpen = false
         endIf
 
         ; Wait on the output to not be blank (or have more than just the command we write)
-        while UI.GetString("Console", "_global.Console.ConsoleInstance.CommandHistory.text") == "" || UI.GetString("Console", "_global.Console.ConsoleInstance.CommandHistory.text") == command
-            Utility.WaitMenuMode(0.01)
-        endWhile
+        ; while UI.GetString("Console", "_global.Console.ConsoleInstance.CommandHistory.text") == "" || UI.GetString("Console", "_global.Console.ConsoleInstance.CommandHistory.text") == command
+        ;     Utility.WaitMenuMode(0.1)
+        ; endWhile
+        Utility.WaitMenuMode(1)
     endIf
 
     ; Remove this from the most recently run command list
@@ -92,8 +101,13 @@ string function Help(string query, bool useConsoleUtil = true) global
 
     string helpText = UI.GetString("Console", "_global.Console.ConsoleInstance.CommandHistory.text")
 
+    Debug.Trace("[ADDSTUFF] HELP TEXT: " + helpText)
+
     ; Restore the terminal's previous history
     UI.SetString("Console", "_global.Console.ConsoleInstance.CommandHistory.text", history)
+    UI.SetString("Console", "_global.Console.ConsoleInstance.CommandEntry.text", "")
+
+    Debug.Trace("[ADDSTUFF] RETURNING HELP TEXT FROM SEARCH")
 
     return helpText
 endFunction
@@ -126,9 +140,9 @@ endFunction
 ;   while i < countInRecordType
 ;       int result = ConsoleConsoleSearch.GetNthResultOfRecordType(results, recordType, i)
 ;       
-;       Debug.Trace("Result name: " + ConsoleConsoleSearch.GetRecordName(result))
-;       Debug.Trace("Result form ID: " + ConsoleConsoleSearch.GetRecordFormID(result))
-;       Debug.Trace("Result editor ID: " + ConsoleConsoleSearch.GetRecordEditorID(result))
+;       Debug.Trace("[ADDSTUFF] Result name: " + ConsoleConsoleSearch.GetRecordName(result))
+;       Debug.Trace("[ADDSTUFF] Result form ID: " + ConsoleConsoleSearch.GetRecordFormID(result))
+;       Debug.Trace("[ADDSTUFF] Result editor ID: " + ConsoleConsoleSearch.GetRecordEditorID(result))
 ;
 ;       i += 1
 ;   endWhile
@@ -137,27 +151,34 @@ endFunction
 ; endWhile
 ;
 ; ```
-int function ExecuteSearch(string query, string recordType = "", string filter = "") global
+int function ExecuteSearch(string query, string recordType = "", string filter = "", bool useConsoleUtil = true) global ; TODO support array of record types
+    Debug.Trace("[ADDSTUFF] Execute Search " + query)
     int results = JMap.object()
     string newline = StringUtil.AsChar(13) ; 10 is Line Feed, 13 is Carriage Return
-    string text = Help(query)
+    string text = Help(query, useConsoleUtil)
+    Debug.Trace("[ADDSTUFF] OK ExecuteSearch here I got the help text: " + text)
     string[] lines = StringUtil.Split(text, newline)
     bool parsingForms
     bool parsingGlobals
     int i = 0
+    Debug.Trace("[ADDSTUFF] PARSING")
+    Debug.Trace(query)
     while i < lines.Length
         string line = lines[i]
+        Debug.Trace(i + ": " + line)
         if ! parsingGlobals && ! parsingForms && StringUtil.Find(line, "-GLOBAL VARIABLES-") > -1
             parsingGlobals = true
         elseIf ! parsingForms && StringUtil.Find(line, "-OTHER FORMS-") > -1
             parsingForms = true
             parsingGlobals = false
+            Debug.Trace("[ADDSTUFF] PARSING FORMS...")
         elseIf parsingForms
             int colon = StringUtil.Find(line, ":")
             if colon > -1
                 int openParens = StringUtil.Find(line, "(")
                 int closeParens = StringUtil.Find(line, ")")
                 int openSingleQuote = StringUtil.Find(line, "'")
+                Debug.Trace("Probably a form! " + openParens + " " + closeParens + " " + openSingleQuote)
                 if openParens && closeParens && openSingleQuote
                     string type = StringUtil.Substring(line, 0, colon)
                     if type != "usage" && type != "filters" && (! recordType || type == recordType)
@@ -167,7 +188,7 @@ int function ExecuteSearch(string query, string recordType = "", string filter =
                         endIf
                         string formId = StringUtil.Substring(line, openParens + 1, closeParens - openParens - 1)
                         string name = StringUtil.Substring(line, openSingleQuote + 1, StringUtil.GetLength(line) - openSingleQuote - 2)
-                        if ! filter || StringUtil.Find(name, filter) > -1 || StringUtil.Find(formId, filter) > -1 || StringUtil.Find(editorId, filter) > -1
+                        if (! filter) || StringUtil.Find(name, filter) > -1 || StringUtil.Find(formId, filter) > -1 || StringUtil.Find(editorId, filter) > -1
                             int result = JMap.object()
                             if JMap.hasKey(results, type)
                                 JArray.addObj(JMap.getObj(results, type), result)
@@ -182,6 +203,7 @@ int function ExecuteSearch(string query, string recordType = "", string filter =
                             JMap.setStr(result, "name", name)
                             JMap.setStr(result, "editorID", editorId)
                             JMap.setStr(result, "formID", formId)
+                            Debug.Trace("[ADDSTUFF] Found form " + formId + " " + editorId + " " + name)
                         endIf
                     endIf
                 endIf
