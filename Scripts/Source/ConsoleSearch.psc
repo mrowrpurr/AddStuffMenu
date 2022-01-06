@@ -1,6 +1,10 @@
 scriptName ConsoleSearch
 {Get `help` results from the console}
 
+function Log(string text) global
+    Debug.Trace("[ADDSTUFF] " + text)
+endFunction
+
 ; Returns the raw returned text from running `help "[query]"` in the console
 string function Help(string query, bool useConsoleUtil = true) global
     Debug.Trace("[ADDSTUFF] Performing help search for " + query)
@@ -9,36 +13,43 @@ string function Help(string query, bool useConsoleUtil = true) global
 
     bool consoleUtilInstalled
     if useConsoleUtil
-        consoleUtilInstalled = ConsoleUtil.GetVersion() ; This WILL explode on VR (set useConsoleUtil = false on VR)
+        consoleUtilInstalled = false ; ConsoleUtil.GetVersion() ; This WILL explode on VR (set useConsoleUtil = false on VR)
     endIf
     
     float consoleInitialized = UI.GetFloat("Console", "_global.Console.InstanceLoaded") ; When custom console.swf is available
 
     ; Initialize by opening the console at least once (then you can immediately close it)
     if ! consoleInitialized
+        Log("Console not initialize")
 
         ; Debug.Trace("[ADDSTUFF] Opening console!")
         if ! consoleOpen
+            Log("Console not open, opening console")
+
             Input.TapKey(41) ; Open ~
-            while ! UI.GetBool("Console", "_global.Console.ConsoleInstance.Shown") ; Wait for it to open
-                Utility.WaitMenuMode(0.1)
-            endWhile
-            consoleOpen = true
-        endIf
-
-        UI.InvokeInt("Console", "_global.Console.SetHistoryCharBufferSize", 100000) ; Critical! Or else not all items will be returned! And search might break entirely!
-
-        if consoleOpen && consoleUtilInstalled
-            Input.TapKey(41) ; Close (but keep it open if console util not installed)
-            ; while UI.GetBool("Console", "_global.Console.ConsoleInstance.Shown") ; Wait for it to close
+            ; while ! UI.GetBool("Console", "_global.Console.ConsoleInstance.Shown") ; Wait for it to open
             ;     Utility.WaitMenuMode(0.1)
             ; endWhile
             Utility.WaitMenuMode(1)
-            consoleOpen = false
+            Log("Waited, so I sure hope the console is open")
+            consoleOpen = true
         endIf
+
+        Log("Invoking required function to set history size")
+        UI.InvokeInt("Console", "_global.Console.SetHistoryCharBufferSize", 100000) ; Critical! Or else not all items will be returned! And search might break entirely!
+
+        ; if consoleOpen && consoleUtilInstalled
+        ;     Input.TapKey(41) ; Close (but keep it open if console util not installed)
+        ;     ; while UI.GetBool("Console", "_global.Console.ConsoleInstance.Shown") ; Wait for it to close
+        ;     ;     Utility.WaitMenuMode(0.1)
+        ;     ; endWhile
+        ;     Utility.WaitMenuMode(1)
+        ;     consoleOpen = false
+        ; endIf
     endIf
 
     ; Clear the console, saving the history to restore after the search completes
+    Log("Clear console history")
     string history = UI.GetString("Console", "_global.Console.ConsoleInstance.CommandHistory.text")
     UI.SetString("Console", "_global.Console.ConsoleInstance.CommandHistory.text", "")
 
@@ -46,7 +57,7 @@ string function Help(string query, bool useConsoleUtil = true) global
     string command = "help \"" + query + "\""
 
     ; Run the command
-    if consoleUtilInstalled ; Use ConsoleUtil if installed
+    if false ; consoleUtilInstalled ; Use ConsoleUtil if installed
         ConsoleUtil.ExecuteCommand(command)
 
         ; Wait on the output to not be blank (or have more than just the command we write)
@@ -57,10 +68,12 @@ string function Help(string query, bool useConsoleUtil = true) global
     else
         ; Open
         if ! consoleOpen
+            Log("I guess it's not open... again? Open it again. this probably shouldn't happen.")
             Input.TapKey(41)
-            while ! UI.GetBool("Console", "_global.Console.ConsoleInstance.Shown") ; Wait for it to open
-                Utility.WaitMenuMode(0.1)
-            endWhile
+            ; while ! UI.GetBool("Console", "_global.Console.ConsoleInstance.Shown") ; Wait for it to open
+            ;     Utility.WaitMenuMode(0.1)
+            ; endWhile
+            Utility.WaitMenuMode(1)
             consoleOpen = true
         endIf
 
@@ -73,12 +86,17 @@ string function Help(string query, bool useConsoleUtil = true) global
 
         ; Debug.Trace("[ADDSTUFF] PRESSING ENTER")
         ; Enter (Twice, just cuz)
+        Log("Ok, pressing enter!")
         Input.TapKey(28)
-        Utility.WaitMenuMode(0.1) ; <--- CTD prevention, the game doesn't enjoy Input.TapKey without some wait between them
+        Log("Pressing enter again")
+        Utility.WaitMenuMode(1) ; <--- CTD prevention, the game doesn't enjoy Input.TapKey without some wait between them
         Input.TapKey(28)
+        Log("Cool, we made it here!")
 
         if consoleOpen
             ; Debug.Trace("[ADDSTUFF] Closing console!")
+            Log("Closing the console")
+            Utility.WaitMenuMode(1)
             Input.TapKey(41)
             ; while UI.GetBool("Console", "_global.Console.ConsoleInstance.Shown") ; Wait for it to close
             ;     Utility.WaitMenuMode(0.1)
@@ -93,6 +111,8 @@ string function Help(string query, bool useConsoleUtil = true) global
         ; endWhile
         Utility.WaitMenuMode(1)
     endIf
+
+    Log("Wow, we made it here?????")
 
     ; Remove this from the most recently run command list
     int commandHistoryLength = UI.GetInt("Console", "_global.Console.ConsoleInstance.Commands.length")
@@ -109,6 +129,11 @@ string function Help(string query, bool useConsoleUtil = true) global
 
     Debug.Trace("[ADDSTUFF] RETURNING HELP TEXT FROM SEARCH")
 
+    ; ; Hack
+    ; ; Close the console
+    ; Utility.WaitMenuMode(0.5)
+    ; Input.TapKey(41) ; ~
+    
     return helpText
 endFunction
 
@@ -154,6 +179,7 @@ endFunction
 int function ExecuteSearch(string query, string recordType = "", string filter = "", bool useConsoleUtil = true) global ; TODO support array of record types
     Debug.Trace("[ADDSTUFF] Execute Search " + query)
     int results = JMap.object()
+    JDB.solveObjSetter(".addStuffMenu.consoleSearch.mostRecentSearchResults", results, createMissingKeys = true)
     string newline = StringUtil.AsChar(13) ; 10 is Line Feed, 13 is Carriage Return
     string text = Help(query, useConsoleUtil)
     Debug.Trace("[ADDSTUFF] OK ExecuteSearch here I got the help text: " + text)

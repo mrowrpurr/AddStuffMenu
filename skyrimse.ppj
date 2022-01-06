@@ -28,8 +28,8 @@
         <!-- <Import>C:\Users\mrowr\AppData\Local\ModOrganizer\VR is Virtual Reality\mods\ConsoleTextEntry\Scripts\Source</Import> -->
         <!-- <Import>C:\Users\mrowr\Dropbox\Skyrim\Mods\ConsoleTextEntry\Scripts\Source</Import> -->
         <!-- <Import>C:\Users\mrowr\AppData\Local\ModOrganizer\VR is Virtual Reality\mods\Form Helper\Scripts\Source</Import> -->
-        <Import>C:\Users\mrowr\AppData\Local\ModOrganizer\Vanilla VR\mods\ConsoleTextEntry\Scripts\Source</Import>
-        <Import>C:\Users\mrowr\AppData\Local\ModOrganizer\Vanilla VR\mods\Form Helper\Scripts\Source</Import>
+        <Import>C:\Users\mrowr\AppData\Local\ModOrganizer\VR is Virtual Reality\mods\ConsoleTextEntry\Scripts\Source</Import>
+        <Import>C:\Users\mrowr\AppData\Local\ModOrganizer\VR is Virtual Reality\mods\Form Helper\Scripts\Source</Import>
         <!-- <Import>@ModsFolder\PapyrusExtender\source\scripts</Import> -->
         <!-- <Import>@ModsFolder\LibFire\Scripts\Source</Import> -->
         <!-- <Import>@ModsFolder\iWantWidgets\Source\Scripts</Import> -->
